@@ -27,6 +27,8 @@ public class Main {
         String next = scanner.nextLine();
 
         //comment for commit
+
+        String nextNext = scanner.nextLine();
         int initialBalance = 300;
         savingsAccount.setBalance(initialBalance);
         savingsAccount.setCustomer(customer);
