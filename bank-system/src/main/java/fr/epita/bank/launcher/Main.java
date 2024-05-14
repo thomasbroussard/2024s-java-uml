@@ -20,6 +20,7 @@ public class Main {
 
 
         SavingsAccount savingsAccount = new SavingsAccount();
+        System.out.println("enter an interest rate");
         String rawInterestRate = scanner.nextLine();
         savingsAccount.setInterestRate(Double.parseDouble(rawInterestRate));
 
