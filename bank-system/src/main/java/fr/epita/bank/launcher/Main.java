@@ -23,7 +23,7 @@ public class Main {
         System.out.println("enter an interest rate");
         String rawInterestRate = scanner.nextLine();
         savingsAccount.setInterestRate(Double.parseDouble(rawInterestRate));
-
+        //comment for commit
         int initialBalance = 300;
         savingsAccount.setBalance(initialBalance);
         savingsAccount.setCustomer(customer);
