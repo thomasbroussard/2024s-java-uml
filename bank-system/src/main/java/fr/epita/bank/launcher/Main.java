@@ -7,6 +7,8 @@ import java.util.Scanner;
 
 public class Main {
 
+    static Scanner reader = new Scanner(System.in);
+
     public static void main(String[] args) {
 
         System.out.println("hello!");
@@ -24,27 +26,21 @@ public class Main {
         String rawInterestRate = scanner.nextLine();
         savingsAccount.setInterestRate(Double.parseDouble(rawInterestRate));
 
-        String next = scanner.nextLine();
-
         //comment for commit
-
-        String nextNext = scanner.nextLine();
-        //blublublue
-        int initialBalance = 300;
+        String inputMessage = "input the Initial Balance";
+        int initialBalance = readInteger(scanner, inputMessage);
         savingsAccount.setBalance(initialBalance);
         savingsAccount.setCustomer(customer);
         savingsAccount.setBalance(savingsAccount.getBalance() - initialBalance);
         System.out.println(savingsAccount.getBalance());
 
-        //create a scenario like this:
-        // create a customer
-        // create a savings account, initial value, as you want,
-        // assign the customer to its savings account
-        // do withdrawal of the total balance
-        // display the final balance (should be 0)
+    }
 
-
-
+    private static int readInteger(Scanner scanner, String inputMessage) {
+        System.out.println(inputMessage);
+        String rawValue = scanner.nextLine();
+        int initialBalance = Integer.parseInt(rawValue);
+        return initialBalance;
     }
 
 }
