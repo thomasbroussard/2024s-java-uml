@@ -3,17 +3,26 @@ package fr.epita.bank.launcher;
 import fr.epita.bank.datamodel.Customer;
 import fr.epita.bank.datamodel.SavingsAccount;
 
+import java.util.Scanner;
+
 public class Main {
 
     public static void main(String[] args) {
 
         System.out.println("hello!");
 
+
+        System.out.println("enter a customer name");
+        Scanner scanner = new Scanner(System.in);
+        String customerName = scanner.nextLine();
         Customer customer = new Customer();
-        customer.setName("toto");
+        customer.setName(customerName);
+
 
         SavingsAccount savingsAccount = new SavingsAccount();
-        savingsAccount.setInterestRate(0.02);
+        String rawInterestRate = scanner.nextLine();
+        savingsAccount.setInterestRate(Double.parseDouble(rawInterestRate));
+
         int initialBalance = 300;
         savingsAccount.setBalance(initialBalance);
         savingsAccount.setCustomer(customer);
@@ -26,6 +35,8 @@ public class Main {
         // assign the customer to its savings account
         // do withdrawal of the total balance
         // display the final balance (should be 0)
+
+
 
     }
 
