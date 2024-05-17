@@ -30,9 +30,17 @@ public class Main {
         Map<String, List<Passenger>> collect = passengers.stream()
                 .collect(Collectors.groupingBy(Passenger::getSex));
 
+        List<String> keys = new ArrayList<>();
+        List<Integer> values = new ArrayList<>();
         collect.forEach((k,v) -> {
             System.out.println(k + ":" + v.size());
+            keys.add(k);
+            values.add(v.size());
         });
+
+
+
+        //call the visualization logic
 
 
     }
