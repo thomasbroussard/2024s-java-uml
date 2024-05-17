@@ -1,35 +1,45 @@
 package fr.epita.titanic.launcher;
 
 import fr.epita.titanic.datamodel.Passenger;
-import org.knowm.xchart.CategoryChart;
-import org.knowm.xchart.CategoryChartBuilder;
-import org.knowm.xchart.SwingWrapper;
-import org.knowm.xchart.style.Styler;
+import fr.epita.titanic.services.Utils;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.OptionalDouble;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static fr.epita.titanic.services.Utils.*;
 
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        List<String> lines = Files.readAllLines(Path.of("titanic/data.csv"));
-        lines.remove(0); // remove the headers
-        List<Passenger> passengers = new ArrayList<>();
-        for (String line: lines) {
-            Passenger passenger = getPassengerFromCSV(line);
-            if (passenger != null) {
-                passengers.add(passenger);
-            }
-        }
-     //   List<Passenger> passengerList = lines.parallelStream().map(Main::getPassengerFromCSV).collect(Collectors.toList());
+        String path = "titanic/data.csv";
+        List<Passenger> passengers = loadPassengers(path);
         System.out.println(passengers.size());
+
         OptionalDouble average = passengers.stream().mapToDouble(Passenger::getAge).average();
         System.out.println(average.getAsDouble());
+
+        //call the visualization logic
+        Function<Passenger, String> groupingFunction = Passenger::getSex;
+        analyse(passengers, Passenger::getSex);
+        analyse(passengers, Passenger::getpClass);
+        analyse(passengers, p -> String.valueOf(p.isSurvived()));
+
+
+
+
+
+    }
+
+    private static void analyse(List<Passenger> passengers, Function<Passenger, String> groupingFunction) {
         Map<String, List<Passenger>> collect = passengers.stream()
-                .collect(Collectors.groupingBy(Passenger::getSex));
+                .collect(Collectors.groupingBy(groupingFunction));
 
         List<String> keys = new ArrayList<>();
         List<Integer> values = new ArrayList<>();
@@ -40,34 +50,21 @@ public class Main {
         });
 
         displayDistributionChart("Distribution over gender (Sex variable)", keys, values);
-
-
-        //call the visualization logic
-
-
     }
 
-    private static void displayDistributionChart(String name, List<String> keys, List<Integer> values) {
-
-        // Create Chart
-        CategoryChart chart = new CategoryChartBuilder()
-                .width(800)
-                .height(600)
-                .title("Distribution BarChart")
-                .xAxisTitle("Gender")
-                .yAxisTitle("count")
-                .build();
-
-        // Customize Chart
-        chart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNW);
-
-        // Series
-        chart.addSeries(name,
-              keys, values);
-
-        new SwingWrapper(chart).displayChart();
-
+    private static List<Passenger> loadPassengers(String path) throws IOException {
+        List<String> lines = Files.readAllLines(Path.of(path));
+        lines.remove(0); // remove the headers
+        List<Passenger> passengers = new ArrayList<>();
+        for (String line: lines) {
+            Passenger passenger = getPassengerFromCSV(line);
+            if (passenger != null) {
+                passengers.add(passenger);
+            }
+        }
+        return passengers;
     }
+
 
     private static Passenger getPassengerFromCSV(String example) {
         try {
