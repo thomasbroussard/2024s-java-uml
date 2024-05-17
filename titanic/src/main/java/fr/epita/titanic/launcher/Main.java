@@ -1,15 +1,11 @@
 package fr.epita.titanic.launcher;
 
 import fr.epita.titanic.datamodel.Passenger;
-import fr.epita.titanic.services.Utils;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.OptionalDouble;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -26,27 +22,42 @@ public class Main {
         System.out.println(average.getAsDouble());
 
         //call the visualization logic
-        analyse(passengers, Passenger::getSex);
-        analyse(passengers, Passenger::getpClass);
-        analyse(passengers, p -> String.valueOf(p.isSurvived()));
+        analyze(passengers, Passenger::getSex, p -> String.valueOf(p.isSurvived()));
 
 
     }
 
-    private static void analyse(List<Passenger> passengers, Function<Passenger, String> groupingFunction) {
+    private static void analyze(List<Passenger> passengers, Function<Passenger, String> groupingFunction, Function<Passenger, String> splitFunction ) {
         Map<String, List<Passenger>> collect = passengers.stream()
                 .collect(Collectors.groupingBy(groupingFunction));
 
+
         List<String> keys = new ArrayList<>();
         List<Integer> values = new ArrayList<>();
+
         collect.forEach((k,v) -> {
-            System.out.println(k + ":" + v.size());
-            keys.add(k);
-            values.add(v.size());
-        });
+                    System.out.println(k + ":" + v.size());
+                    keys.add(k);
+                    values.add(v.size());
+                }
+        );
+        Map<String, Map<String, List<Passenger>>> splitDatasets = new LinkedHashMap<>();
+
+        for ( String key : keys) {
+            List<Passenger> subDataset = collect.get(key);
+            Map<String, List<Passenger>> splitDataSet = subDataset.stream().collect(Collectors.groupingBy(splitFunction));
+            splitDatasets.put(key, splitDataSet);
+        }
+        System.out.println(splitDatasets);
+
+
+       /* splitDatasets.forEach(
+                System.out.println("");
+
+              )
 
         displayDistributionChart("Distribution over gender (Sex variable)", keys, values);
-    }
+*/    }
 
     private static List<Passenger> loadPassengers(String path) throws IOException {
         List<String> lines = Files.readAllLines(Path.of(path));
