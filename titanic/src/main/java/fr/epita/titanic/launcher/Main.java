@@ -26,13 +26,9 @@ public class Main {
         System.out.println(average.getAsDouble());
 
         //call the visualization logic
-        Function<Passenger, String> groupingFunction = Passenger::getSex;
         analyse(passengers, Passenger::getSex);
         analyse(passengers, Passenger::getpClass);
         analyse(passengers, p -> String.valueOf(p.isSurvived()));
-
-
-
 
 
     }
