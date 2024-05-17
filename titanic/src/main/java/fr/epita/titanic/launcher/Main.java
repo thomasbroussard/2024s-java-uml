@@ -33,6 +33,8 @@ public class Main {
         collect.forEach((k,v) -> {
             System.out.println(k + ":" + v.size());
         });
+
+
     }
 
     private static Passenger getPassengerFromCSV(String example) {
