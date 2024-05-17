@@ -1,14 +1,15 @@
 package fr.epita.titanic.launcher;
 
 import fr.epita.titanic.datamodel.Passenger;
+import org.knowm.xchart.CategoryChart;
+import org.knowm.xchart.CategoryChartBuilder;
+import org.knowm.xchart.SwingWrapper;
+import org.knowm.xchart.style.Styler;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.OptionalDouble;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Main {
@@ -38,10 +39,33 @@ public class Main {
             values.add(v.size());
         });
 
+        displayDistributionChart("Distribution over gender (Sex variable)", keys, values);
 
 
         //call the visualization logic
 
+
+    }
+
+    private static void displayDistributionChart(String name, List<String> keys, List<Integer> values) {
+
+        // Create Chart
+        CategoryChart chart = new CategoryChartBuilder()
+                .width(800)
+                .height(600)
+                .title("Distribution BarChart")
+                .xAxisTitle("Gender")
+                .yAxisTitle("count")
+                .build();
+
+        // Customize Chart
+        chart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNW);
+
+        // Series
+        chart.addSeries(name,
+              keys, values);
+
+        new SwingWrapper(chart).displayChart();
 
     }
 
