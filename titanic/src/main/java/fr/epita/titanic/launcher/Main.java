@@ -22,12 +22,15 @@ public class Main {
         System.out.println(average.getAsDouble());
 
         //call the visualization logic
-        analyze(passengers, Passenger::getSex, p -> String.valueOf(p.isSurvived()));
-
+        Function<Passenger, String> survivedFunction = p -> String.valueOf(p.isSurvived());
+        analyze(passengers, Passenger::getSex, survivedFunction);
+        analyze(passengers, Passenger::getpClass, survivedFunction);
 
     }
 
-    private static void analyze(List<Passenger> passengers, Function<Passenger, String> groupingFunction, Function<Passenger, String> splitFunction ) {
+    private static void analyze(List<Passenger> passengers,
+                                Function<Passenger, String> groupingFunction,
+                                Function<Passenger, String> splitFunction) {
         Map<String, List<Passenger>> collect = passengers.stream()
                 .collect(Collectors.groupingBy(groupingFunction));
 
@@ -51,13 +54,10 @@ public class Main {
         System.out.println(splitDatasets);
 
 
-       /* splitDatasets.forEach(
-                System.out.println("");
 
-              )
+        displayDistributionChart("Distribution over ", keys, values);
 
-        displayDistributionChart("Distribution over gender (Sex variable)", keys, values);
-*/    }
+    }
 
     private static List<Passenger> loadPassengers(String path) throws IOException {
         List<String> lines = Files.readAllLines(Path.of(path));

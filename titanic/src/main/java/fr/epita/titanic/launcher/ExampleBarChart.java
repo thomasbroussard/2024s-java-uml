@@ -29,9 +29,12 @@ public class ExampleBarChart {
         chart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNW);
 
         // Series
-        chart.addSeries("Distribution over Gender",
+        chart.addSeries("survived",
                 Arrays.asList(new String[]{"male", "female"}),
-                Arrays.asList(new Integer[]{468, 288}));
+                Arrays.asList(new Integer[]{125, 200}));
+        chart.addSeries("not survived",
+                Arrays.asList(new String[]{"male", "female"}),
+                Arrays.asList(new Integer[]{240, 10}));
 
         return chart;
     }
