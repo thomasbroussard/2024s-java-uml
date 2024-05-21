@@ -1,6 +1,8 @@
 package fr.epita.titanic.launcher;
 
 import fr.epita.titanic.datamodel.Passenger;
+import fr.epita.titanic.services.BarChartBuilder;
+import fr.epita.titanic.services.XYChartSerie;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -56,6 +58,17 @@ public class Main {
 
 
         displayDistributionChart("Distribution over ", keys, values);
+
+        List<String> classes = Arrays.asList("1st", "2nd", "3rd");
+        new BarChartBuilder("Distribution over Pclass")
+                .yTitle("count")
+                .xTitle("Pclass")
+                .serie(new XYChartSerie("survived", classes, Arrays.asList(1, 2, 3)))
+                .serie(new XYChartSerie("not survived", classes, Arrays.asList(3, 2, 1)))
+                .buildAndDisplay();
+
+
+
 
     }
 
