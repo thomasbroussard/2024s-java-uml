@@ -25,33 +25,34 @@ public class Main {
         System.out.println(average.getAsDouble());
 
         //call the visualization logic
-        analyzeDistribution(passengers, Passenger::getSex, Passenger::isSurvived);
-        analyzeDistribution(passengers, Passenger::getpClass,Passenger::isSurvived);
-
+       // analyzeDistribution(passengers, Passenger::getSex, Passenger::isSurvived);
+        //analyzeDistribution(passengers, Passenger::getpClass,Passenger::isSurvived);
+        Function<Passenger, String> splitFunction = p -> String.valueOf(p.isSurvived());
+        analyzeDistributionChatGPT(passengers, "Pclass", Passenger::getpClass, splitFunction);
+        analyzeDistributionChatGPT(passengers, "sex", Passenger::getSex, splitFunction);
     }
 
-    private static void analyzeDistribution(List<Passenger> passengers,
-                                            Function<Passenger, String> groupingFunction,
-                                            Predicate<Passenger> filterFunction) {
-        List<Passenger> serie1Data = passengers.stream().filter(filterFunction).collect(Collectors.toList());
-        List<Passenger> serie2Data = passengers.stream().filter(p -> !filterFunction.test(p)).collect(Collectors.toList());
+    public static void analyzeDistributionChatGPT(List<Passenger> passengers, String attributeName,
+                                           Function<Passenger, String> groupingFunction,
+                                           Function<Passenger, String> splitFunction) {
+        // Split passengers based on the splitFunction
+        Map<String, List<Passenger>> splitData = passengers.stream()
+                .collect(Collectors.groupingBy(splitFunction));
 
-        Map<String, Long> groupByCountSerie1 = groupByCount(serie1Data, groupingFunction);
-        Map<String, Long> groupByCountSerie2 = groupByCount(serie2Data, groupingFunction);
+        // Prepare series data for each split subset
+        List<XYChartSerie> seriesList = new ArrayList<>();
+        splitData.forEach((splitKey, passengerList) -> {
+            Map<String, Long> groupByCount = groupByCount(passengerList, groupingFunction);
+            seriesList.add(new XYChartSerie(splitKey, groupByCount.keySet(), groupByCount.values()));
+        });
 
 
-        displayDistributionChart("Distribution over ", groupByCountSerie1.keySet(), groupByCountSerie1.values());
-        List<String> classes = Arrays.asList("1st", "2nd", "3rd");
-        new BarChartBuilder("Distribution over Pclass")
+        // Display bar chart
+        BarChartBuilder barChartBuilder = new BarChartBuilder("Distribution over " + attributeName)
                 .yTitle("count")
-                .xTitle("Pclass")
-                .serie(new XYChartSerie("survived", groupByCountSerie1.keySet(), groupByCountSerie1.values() ))
-                .serie(new XYChartSerie("not survived", groupByCountSerie2.keySet(), groupByCountSerie2.values()))
-                .buildAndDisplay();
-
-
-
-
+                .xTitle("Pclass");
+        seriesList.forEach(barChartBuilder::serie);
+        barChartBuilder.buildAndDisplay();
     }
 
     private static Map<String, Long> groupByCount(List<Passenger> passengers, Function<Passenger, String> groupingFunction) {
