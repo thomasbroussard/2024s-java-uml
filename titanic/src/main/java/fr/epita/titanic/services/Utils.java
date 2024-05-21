@@ -5,12 +5,14 @@ import org.knowm.xchart.CategoryChartBuilder;
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.style.Styler;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class Utils {
 
 
-    public static void displayDistributionChart(String name, List<String> keys, List<Integer> values) {
+    public static void displayDistributionChart(String name, Collection<String> keys, Collection<Long> values) {
 
         // Create Chart
         CategoryChart chart = new CategoryChartBuilder()
@@ -25,8 +27,7 @@ public class Utils {
         chart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNW);
 
         // Series
-        chart.addSeries(name,
-                keys, values);
+        chart.addSeries(name, new ArrayList<>(keys), new ArrayList<>(values));
 
         new SwingWrapper(chart).displayChart();
 

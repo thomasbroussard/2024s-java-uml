@@ -1,5 +1,7 @@
 package fr.epita.titanic.services;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class XYChartSerie<T> {
@@ -8,10 +10,10 @@ public class XYChartSerie<T> {
     private List<T> xValues;
     private List<Number> yValues;
 
-    public XYChartSerie(String name, List<T> xValues, List<Number> yValues) {
+    public XYChartSerie(String name, Collection<T> xValues, Collection<Number> yValues) {
         this.name = name;
-        this.xValues = xValues;
-        this.yValues = yValues;
+        this.xValues = new ArrayList<>(xValues);
+        this.yValues = new ArrayList<>(yValues);
     }
 
     public String getName() {

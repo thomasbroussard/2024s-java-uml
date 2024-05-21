@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static fr.epita.titanic.services.Utils.*;
@@ -24,52 +25,38 @@ public class Main {
         System.out.println(average.getAsDouble());
 
         //call the visualization logic
-        Function<Passenger, String> survivedFunction = p -> String.valueOf(p.isSurvived());
-        analyze(passengers, Passenger::getSex, survivedFunction);
-        analyze(passengers, Passenger::getpClass, survivedFunction);
+        analyzeDistribution(passengers, Passenger::getSex, Passenger::isSurvived);
+        analyzeDistribution(passengers, Passenger::getpClass,Passenger::isSurvived);
 
     }
 
-    private static void analyze(List<Passenger> passengers,
-                                Function<Passenger, String> groupingFunction,
-                                Function<Passenger, String> splitFunction) {
-        Map<String, List<Passenger>> collect = passengers.stream()
-                .collect(Collectors.groupingBy(groupingFunction));
+    private static void analyzeDistribution(List<Passenger> passengers,
+                                            Function<Passenger, String> groupingFunction,
+                                            Predicate<Passenger> filterFunction) {
+        List<Passenger> serie1Data = passengers.stream().filter(filterFunction).collect(Collectors.toList());
+        List<Passenger> serie2Data = passengers.stream().filter(p -> !filterFunction.test(p)).collect(Collectors.toList());
+
+        Map<String, Long> groupByCountSerie1 = groupByCount(serie1Data, groupingFunction);
+        Map<String, Long> groupByCountSerie2 = groupByCount(serie2Data, groupingFunction);
 
 
-        List<String> keys = new ArrayList<>();
-        List<Integer> values = new ArrayList<>();
-
-        collect.forEach((k,v) -> {
-                    System.out.println(k + ":" + v.size());
-                    keys.add(k);
-                    values.add(v.size());
-                }
-        );
-        Map<String, Map<String, List<Passenger>>> splitDatasets = new LinkedHashMap<>();
-
-        for ( String key : keys) {
-            List<Passenger> subDataset = collect.get(key);
-            Map<String, List<Passenger>> splitDataSet = subDataset.stream().collect(Collectors.groupingBy(splitFunction));
-            splitDatasets.put(key, splitDataSet);
-        }
-        System.out.println(splitDatasets);
-
-
-
-        displayDistributionChart("Distribution over ", keys, values);
-
+        displayDistributionChart("Distribution over ", groupByCountSerie1.keySet(), groupByCountSerie1.values());
         List<String> classes = Arrays.asList("1st", "2nd", "3rd");
         new BarChartBuilder("Distribution over Pclass")
                 .yTitle("count")
                 .xTitle("Pclass")
-                .serie(new XYChartSerie("survived", classes, Arrays.asList(1, 2, 3)))
-                .serie(new XYChartSerie("not survived", classes, Arrays.asList(3, 2, 1)))
+                .serie(new XYChartSerie("survived", groupByCountSerie1.keySet(), groupByCountSerie1.values() ))
+                .serie(new XYChartSerie("not survived", groupByCountSerie2.keySet(), groupByCountSerie2.values()))
                 .buildAndDisplay();
 
 
 
 
+    }
+
+    private static Map<String, Long> groupByCount(List<Passenger> passengers, Function<Passenger, String> groupingFunction) {
+        return passengers.stream()
+                .collect(Collectors.groupingBy(groupingFunction, Collectors.counting()));
     }
 
     private static List<Passenger> loadPassengers(String path) throws IOException {

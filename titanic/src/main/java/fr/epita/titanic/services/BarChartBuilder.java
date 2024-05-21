@@ -56,7 +56,7 @@ public class BarChartBuilder {
 
         for (XYChartSerie serie: series){
             chart.addSeries(serie.getName(),
-                    serie.getyValues(), serie.getyValues());
+                    serie.getxValues(), serie.getyValues());
         }
         // Series
 
