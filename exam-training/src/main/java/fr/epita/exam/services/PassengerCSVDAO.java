@@ -5,6 +5,7 @@ import fr.epita.exam.datamodel.Passenger;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,5 +38,28 @@ public class PassengerCSVDAO {
             e.printStackTrace();
         }
         return results;
+    }
+
+    public void writeAll(List<Passenger> passengers){
+        List<String> lines = new ArrayList<>();
+        //PClass ;Name ;Sex ;Age ;Survived
+        lines.add("PClass ;Name ;Sex ;Age ;Survived");
+        for (Passenger p: passengers) {
+            String line = p.getpClass() + ";";
+            line += p.getName() + ";";
+            line += p.getSex() + ";";
+            line += p.getAge() + ";";
+            line += p.getSurvived() ? "1":"0" + ";";
+            lines.add(line);
+        }
+        String finalResult = "";
+        for(String line: lines){
+            finalResult += line  + "\n";
+        }
+        try {
+            Files.writeString(Path.of("data_output.csv"), finalResult, StandardOpenOption.CREATE_NEW);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }
