@@ -1,4 +1,4 @@
-package fr.epita.exam.launch;
+package fr.epita.exam.test;
 
 import fr.epita.exam.datamodel.Passenger;
 
